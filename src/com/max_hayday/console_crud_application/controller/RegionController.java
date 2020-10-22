@@ -1,32 +1,25 @@
 package com.max_hayday.console_crud_application.controller;
 
 import com.max_hayday.console_crud_application.model.Region;
-import com.max_hayday.console_crud_application.repository.JavaIORegionRepositoryImpl;
+import com.max_hayday.console_crud_application.repository.Implementations.JavaIORegionRepositoryImpl;
 import com.max_hayday.console_crud_application.repository.RegionRepository;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class RegionController {
-    Region region;
-    List<Region> list = new ArrayList<>();
-    RegionRepository regionRepository;
+    private RegionRepository regionRepository;
 
     public RegionController() throws IOException {
         regionRepository = new JavaIORegionRepositoryImpl();
     }
 
     public void save(String name) throws IOException {
-        region = new Region(0L, name);
-        region = regionRepository.save(region);
-        if (region != null) {
-            list.add(region);
-        }
+        regionRepository.save(new Region(null, name));
     }
 
-    public void update(Long id, String updatedData) throws IOException {
-        regionRepository.update(new Region(id, updatedData));
+    public void update(Region r) throws IOException {
+        regionRepository.update(r);
     }
 
     public List<Region> getAll() throws IOException {

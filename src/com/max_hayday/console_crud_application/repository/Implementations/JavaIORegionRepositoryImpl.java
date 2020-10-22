@@ -1,7 +1,8 @@
-package com.max_hayday.console_crud_application.repository;
+package com.max_hayday.console_crud_application.repository.Implementations;
 
 
 import com.max_hayday.console_crud_application.model.Region;
+import com.max_hayday.console_crud_application.repository.RegionRepository;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,28 +14,28 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 public class JavaIORegionRepositoryImpl implements RegionRepository {
-    Path regionPath = Paths.get("/home/max/IdeaProjects/ConsoleCRUDApplication/src/resources/region.txt");
-    private Long ID = 0L;
-    List<Region> regionList;
-    List<String> list;
-    BufferedReader reader;
-    BufferedWriter writer;
+
+    private static final Path regionPath = Paths.get("//home/max/IdeaProjects/ConsoleCRUDApplication/src/resources/region.txt");
+    private static Long countId = 1L;
+    private List<Region> regionList;
+    private List<String> list;
+    private BufferedReader reader;
+    private BufferedWriter writer;
 
 
     public JavaIORegionRepositoryImpl() throws IOException {
         regionList = getAll();
         for (Region region :
                 regionList) {
-            if (region.getId() > ID) {
-                ID = region.getId();
-            } else ID = 0L;
+            if (region.getId() > countId) {
+                countId = region.getId();
+            } else countId = 1L;
         }
-
     }
 
     @Override
     public Region save(Region r) throws IOException {
-        String regionStr = (++ID) + "." + r.getName() + "/" + "\n";
+        String regionStr = (++countId) + "." + r.getName() + "/" + "\n";
         Files.write(regionPath, regionStr.getBytes(), StandardOpenOption.APPEND);
         return r;
     }
@@ -42,16 +43,18 @@ public class JavaIORegionRepositoryImpl implements RegionRepository {
     @Override
     public Region getById(Long id) throws IOException {
         reader = Files.newBufferedReader(regionPath);
-        List<String> list = new ArrayList<>();
+        list = new ArrayList<>();
         while (reader.ready()) {
             list.add(reader.readLine());
         }
         reader.close();
         for (String s :
                 list) {
-            if (Long.parseLong(s.split("\\.")[0]) == id) {
-                return new Region(id, s.split("\\.")[1]);
-            }
+            if (!(s.isEmpty())) {
+                if (Long.parseLong(s.split("\\.")[0]) == id) {
+                    return new Region(id, s.split("\\.")[1]);
+                }
+            } else break;
         }
         return null;
     }
@@ -78,8 +81,13 @@ public class JavaIORegionRepositoryImpl implements RegionRepository {
     }
 
     @Override
+    public Region update(List<Region> t) throws IOException {
+        return null;
+    }
+
+    @Override
     public List<Region> getAll() throws IOException {
-        List<Region> regionList = new ArrayList<>();
+        regionList = new ArrayList();
         reader = Files.newBufferedReader(regionPath);
         while (reader.ready()) {
             String line = reader.readLine();
@@ -111,5 +119,6 @@ public class JavaIORegionRepositoryImpl implements RegionRepository {
             }
         }
         writer.close();
+        --countId;
     }
 }

@@ -4,7 +4,7 @@ public class Region {
     private Long id;
     private String name;
 
-    public Region(Long id,String name) {
+    public Region(Long id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -17,11 +17,8 @@ public class Region {
         return name;
     }
 
-    @Override
-    public String toString() {
-        return "Region{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+    public void setId(Long id) {
+        this.id = id;
     }
+
 }

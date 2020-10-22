@@ -1,15 +1,15 @@
 package com.max_hayday.console_crud_application;
 
-import com.max_hayday.console_crud_application.view.RegionView;
+import com.max_hayday.console_crud_application.view.UserView;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.text.ParseException;
+
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        RegionView view = new RegionView();
-        view.showMenu();
+    public static void main(String[] args) throws IOException, ParseException {
+        UserView view = new UserView();
+        view.showUserView();
 
     }
 }
