@@ -1,4 +1,4 @@
-package com.max_hayday.console_crud_application.repository.Implementations;
+package com.max_hayday.console_crud_application.repository.implementations;
 
 
 import com.max_hayday.console_crud_application.model.Region;
@@ -16,7 +16,7 @@ import java.util.*;
 public class JavaIORegionRepositoryImpl implements RegionRepository {
 
     private static final Path regionPath = Paths.get("//home/max/IdeaProjects/ConsoleCRUDApplication/src/resources/region.txt");
-    private static Long countId = 1L;
+    private static Long countId = 0L;
     private List<Region> regionList;
     private List<String> list;
     private BufferedReader reader;
@@ -29,7 +29,7 @@ public class JavaIORegionRepositoryImpl implements RegionRepository {
                 regionList) {
             if (region.getId() > countId) {
                 countId = region.getId();
-            } else countId = 1L;
+            } else countId = 0L;
         }
     }
 

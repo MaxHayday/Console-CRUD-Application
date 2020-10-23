@@ -4,7 +4,7 @@ import com.max_hayday.console_crud_application.model.Post;
 import com.max_hayday.console_crud_application.model.Region;
 import com.max_hayday.console_crud_application.model.Role;
 import com.max_hayday.console_crud_application.model.User;
-import com.max_hayday.console_crud_application.repository.Implementations.JavaIOUserRepositoryImpl;
+import com.max_hayday.console_crud_application.repository.implementations.JavaIOUserRepositoryImpl;
 import com.max_hayday.console_crud_application.repository.UserRepository;
 
 import java.io.IOException;

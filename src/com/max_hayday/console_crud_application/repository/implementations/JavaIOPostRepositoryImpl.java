@@ -1,4 +1,4 @@
-package com.max_hayday.console_crud_application.repository.Implementations;
+package com.max_hayday.console_crud_application.repository.implementations;
 
 import com.max_hayday.console_crud_application.model.Post;
 import com.max_hayday.console_crud_application.repository.PostRepository;
@@ -16,7 +16,7 @@ import java.util.List;
 
 public class JavaIOPostRepositoryImpl implements PostRepository {
     private static final Path postPath = Paths.get("/home/max/IdeaProjects/ConsoleCRUDApplication/src/resources/post.txt");
-    private static Long countId = 1L;
+    private static Long countId = 0L;
     private List<String> list;
     private List<Post> postList;
     private BufferedReader reader;
@@ -30,7 +30,7 @@ public class JavaIOPostRepositoryImpl implements PostRepository {
                 postList) {
             if (p.getId() > countId) {
                 countId = p.getId();
-            } else countId = 1L;
+            } else countId = 0L;
         }
     }
 

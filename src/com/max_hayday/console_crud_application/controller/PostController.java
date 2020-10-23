@@ -1,7 +1,7 @@
 package com.max_hayday.console_crud_application.controller;
 
 import com.max_hayday.console_crud_application.model.Post;
-import com.max_hayday.console_crud_application.repository.Implementations.JavaIOPostRepositoryImpl;
+import com.max_hayday.console_crud_application.repository.implementations.JavaIOPostRepositoryImpl;
 import com.max_hayday.console_crud_application.repository.PostRepository;
 
 import java.io.IOException;

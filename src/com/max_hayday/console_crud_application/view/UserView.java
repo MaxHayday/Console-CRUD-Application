@@ -1,5 +1,7 @@
 package com.max_hayday.console_crud_application.view;
 
+import com.max_hayday.console_crud_application.controller.PostController;
+import com.max_hayday.console_crud_application.controller.RegionController;
 import com.max_hayday.console_crud_application.controller.UserController;
 import com.max_hayday.console_crud_application.model.Post;
 import com.max_hayday.console_crud_application.model.Region;
@@ -15,17 +17,23 @@ import java.util.List;
 
 public class UserView {
     private UserController userController;
+    private PostController postController;
+    private RegionController regionController;
     private List<User> userList;
     private List<Post> postList;
+    private List<Region> regionList;
     private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     private static Long id = 0L;
-    private String firstNameData = "", lastNameData = "", data;
+    private String firstNameData = "", lastNameData = "", data, regionStr = "", postStr = "";
     private Region region;
     private User user;
+    private Post post;
 
 
     public UserView() throws IOException, ParseException {
         userController = new UserController();
+        postController = new PostController();
+        regionController = new RegionController();
     }
 
     public void showUserView() throws IOException {
@@ -67,6 +75,8 @@ public class UserView {
         try {
             id = Long.parseLong(reader.readLine());
             user = userController.getById(id);
+            post = postController.getById(id);
+            region = regionController.getById(id);
             if (user == null) {
                 System.out.println("YOU HAVE NOT USER WITH ID: " + id);
                 return;
@@ -74,11 +84,8 @@ public class UserView {
             System.out.println("================================================================================================================================================");
             System.out.printf("%-5s%-15s%-20s%-20s%-20s%-20s%-25s%-20s%n", "ID", "FIRST_NAME", "LAST_NAME", "ROLE", "REGION", "POSTS", "POST CREATED", "POST UPDATED");
             System.out.println("================================================================================================================================================");
-            System.out.printf("%-5s%-15s%-20s%-20s%-20s", user.getId(), user.getFirstName(), user.getLastName(), user.getRole(), user.getRegion().getName());
-            for (Post p :
-                    user.getPosts()) {
-                System.out.printf("%-20s%-25s%-20s%n", p.getContent(), p.getCreated(), p.getUpdated());
-            }
+            System.out.printf("%-5s%-15s%-20s%-20s%-20s", user.getId(), user.getFirstName(), user.getLastName(), user.getRole(), region.getName());
+            System.out.printf("%-20s%-25s%-20s%n", post.getContent(), post.getCreated(), post.getUpdated());
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------");
         } catch (NumberFormatException | ParseException | IOException e) {
             System.out.println("You have not users.");
@@ -87,6 +94,7 @@ public class UserView {
 
     private void save() {
         postList = new ArrayList<>();
+
         System.out.println("Write first name of user: ");
         try {
             data = reader.readLine();
@@ -102,11 +110,12 @@ public class UserView {
             System.out.println("Write region of user: ");
             data = reader.readLine();
             if (!(data.isEmpty() || data.equals(" "))) {
-                region = new Region(id, data);
+                regionStr = data;//= new Region(id, data)
             } else System.out.println("You need to write a region.");
             System.out.println("Write posts of user, separated by commas: ");
             data = reader.readLine();
             if (!(data.isEmpty() || data.equals(" "))) {
+                postStr = data;
                 postList.add(new Post(id, data, null, null));
             } else System.out.println("You need to write a posts.");
             System.out.println("Choose role of user: ");
@@ -117,12 +126,18 @@ public class UserView {
             switch (data) {
                 case "1":
                     userController.save(id, firstNameData, lastNameData, postList, region, Role.USER);
+                    postController.save(postStr);
+                    regionController.save(regionStr);
                     break;
                 case "2":
                     userController.save(id, firstNameData, lastNameData, postList, region, Role.ADMIN);
+                    postController.save(postStr);
+                    regionController.save(regionStr);
                     break;
                 case "3":
                     userController.save(id, firstNameData, lastNameData, postList, region, Role.MODERATOR);
+                    postController.save(postStr);
+                    regionController.save(regionStr);
                     break;
             }
         } catch (IOException e) {
@@ -134,6 +149,8 @@ public class UserView {
     private void getAll() {
         try {
             userList = userController.getAll();
+            postList = postController.getAll();
+            regionList = regionController.getAll();
             if (userList.isEmpty()) {
                 System.out.println("YOU HAVE NOT USER.");
                 return;
@@ -143,10 +160,18 @@ public class UserView {
             System.out.println("======================================================================================================================");
             for (User i :
                     userList) {
-                System.out.printf("%-5s%-15s%-25s%-25s%-25s", i.getId(), i.getFirstName(), i.getLastName(), i.getRole(), i.getRegion().getName());
+                System.out.printf("%-5s%-15s%-25s%-25s", i.getId(), i.getFirstName(), i.getLastName(), i.getRole());
+                for (Region r :
+                        regionList) {
+                    if (r.getId() == i.getId()) {
+                        System.out.printf("%-25s", r.getName());
+                    }
+                }
                 for (Post p :
-                        i.getPosts()) {
-                    System.out.print(p.getContent() + " ");
+                        postList) {
+                    if (p.getId() == i.getId()) {
+                        System.out.print(p.getContent() + " ");
+                    }
                 }
                 System.out.println();
             }
@@ -177,12 +202,18 @@ public class UserView {
             switch (data) {
                 case "1":
                     userController.update(new User(id, firstNameData, lastNameData, postList, region, Role.USER));
+                    regionController.update(region);
+                    postController.update(postList);
                     break;
                 case "2":
                     userController.update(new User(id, firstNameData, lastNameData, postList, region, Role.ADMIN));
+                    regionController.update(region);
+                    postController.update(postList);
                     break;
                 case "3":
                     userController.update(new User(id, firstNameData, lastNameData, postList, region, Role.MODERATOR));
+                    regionController.update(region);
+                    postController.update(postList);
                     break;
             }
         } catch (IOException | NumberFormatException exception) {
@@ -195,6 +226,8 @@ public class UserView {
         try {
             id = Long.parseLong(reader.readLine());
             userController.deleteById(id);
+            postController.deleteById(id);
+            regionController.deleteById(id);
         } catch (IOException | NumberFormatException e) {
             System.out.println("Write correct id.");
         }

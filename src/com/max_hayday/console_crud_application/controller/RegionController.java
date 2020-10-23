@@ -1,7 +1,7 @@
 package com.max_hayday.console_crud_application.controller;
 
 import com.max_hayday.console_crud_application.model.Region;
-import com.max_hayday.console_crud_application.repository.Implementations.JavaIORegionRepositoryImpl;
+import com.max_hayday.console_crud_application.repository.implementations.JavaIORegionRepositoryImpl;
 import com.max_hayday.console_crud_application.repository.RegionRepository;
 
 import java.io.IOException;

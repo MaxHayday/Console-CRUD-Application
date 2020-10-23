@@ -1,4 +1,4 @@
-package com.max_hayday.console_crud_application.repository.Implementations;
+package com.max_hayday.console_crud_application.repository.implementations;
 
 import com.max_hayday.console_crud_application.controller.PostController;
 import com.max_hayday.console_crud_application.controller.RegionController;
@@ -21,27 +21,19 @@ import java.util.List;
 
 public class JavaIOUserRepositoryImpl implements UserRepository {
     private static final Path userPath = Paths.get("//home/max/IdeaProjects/ConsoleCRUDApplication/src/resources/user.txt");
-    private static Long countId = 1L;
-
-    private PostController postController;
-    private Post post;
-    private List<Post> postList;
-    private RegionController regionController;
-    private List<User> userList;
+    private static Long countId = 0L;
     private List<String> list;
     private BufferedReader reader;
     private BufferedWriter writer;
 
 
     public JavaIOUserRepositoryImpl() throws IOException, ParseException {
-        postController = new PostController();
-        regionController = new RegionController();
-        userList = getAll();
+        List<User> userList = getAll();
         for (User u :
                 userList) {
             if (u.getId() > countId) {
                 countId = u.getId();
-            } else countId = 1L;
+            } else countId = 0L;
         }
 
     }
@@ -58,12 +50,8 @@ public class JavaIOUserRepositoryImpl implements UserRepository {
                 list) {
             if (Long.parseLong(s.split("\\.")[0]) == id) {
                 String[] strings = s.split("\\s+|\\.\\s*");
-                Region region = regionController.getById(id);
-                Post post = postController.getById(id);
-                List<Post> posts = new ArrayList<>();
-                posts.add(post);
                 Role role = Role.valueOf(s.split("\\s+|\\.\\s*")[3]);
-                return new User(id, strings[1], strings[2], posts, region, role);
+                return new User(id, strings[1], strings[2], null, null, role);
             }
         }
         return null;
@@ -73,13 +61,6 @@ public class JavaIOUserRepositoryImpl implements UserRepository {
     public User save(User user) throws IOException {
         String regionStr = (++countId) + "." + user.getFirstName() + " " + user.getLastName() + " " + user.getRole() + "\n";
         Files.write(userPath, regionStr.getBytes(), StandardOpenOption.APPEND);
-        regionController.save(user.getRegion().getName());
-        String post = "";
-        for (Post p :
-                user.getPosts()) {
-            post = p.getContent() + post;
-        }
-        postController.save(post);
         return user;
     }
 
@@ -103,8 +84,6 @@ public class JavaIOUserRepositoryImpl implements UserRepository {
         }
 
         writer.close();
-        regionController.update(user.getRegion());
-        postController.update(user.getPosts());
         return null;
     }
 
@@ -115,7 +94,7 @@ public class JavaIOUserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> getAll() throws IOException, ParseException {
-        userList = new ArrayList();
+        List<User>userList = new ArrayList();
         Long id;
         String firstName, lastName;
         reader = Files.newBufferedReader(userPath);
@@ -126,14 +105,7 @@ public class JavaIOUserRepositoryImpl implements UserRepository {
                 firstName = str[1];
                 lastName = str[2];
                 Role role = Role.valueOf(str[3]);
-                Region region = regionController.getById(id);
-                post = postController.getById(id);
-                String[] posts = post.getContent().split("\\s+|,\\s*");
-                postList = new ArrayList();
-                for (String s : posts) {
-                    postList.add(new Post(id, s, null, null));
-                }
-                userList.add(new User(id, firstName, lastName, postList, region, role));
+                userList.add(new User(id, firstName, lastName, null, null, role));
             }
         }
         reader.close();
@@ -157,8 +129,6 @@ public class JavaIOUserRepositoryImpl implements UserRepository {
             }
         }
         writer.close();
-        postController.deleteById(id);
-        regionController.deleteById(id);
         --countId;
     }
 }
