@@ -1,9 +1,5 @@
 package com.max_hayday.console_crud_application.repository.implementations;
 
-import com.max_hayday.console_crud_application.controller.PostController;
-import com.max_hayday.console_crud_application.controller.RegionController;
-import com.max_hayday.console_crud_application.model.Post;
-import com.max_hayday.console_crud_application.model.Region;
 import com.max_hayday.console_crud_application.model.Role;
 import com.max_hayday.console_crud_application.model.User;
 import com.max_hayday.console_crud_application.repository.UserRepository;
@@ -15,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +22,7 @@ public class JavaIOUserRepositoryImpl implements UserRepository {
     private BufferedWriter writer;
 
 
-    public JavaIOUserRepositoryImpl() throws IOException, ParseException {
+    public JavaIOUserRepositoryImpl() throws IOException {
         List<User> userList = getAll();
         for (User u :
                 userList) {
@@ -39,7 +34,7 @@ public class JavaIOUserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User getById(Long id) throws IOException, ParseException {
+    public User getById(Long id) throws IOException {
         reader = Files.newBufferedReader(userPath);
         list = new ArrayList<>();
         while (reader.ready()) {
@@ -93,7 +88,7 @@ public class JavaIOUserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<User> getAll() throws IOException, ParseException {
+    public List<User> getAll() throws IOException {
         List<User>userList = new ArrayList();
         Long id;
         String firstName, lastName;
