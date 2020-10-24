@@ -12,6 +12,7 @@ public class Menu {
     private RegionView regionView;
     private String data;
     private Long id = 0L;
+    private boolean isTrue = false;
 
     public Menu() throws IOException, ParseException {
         userView = new UserView();
@@ -30,13 +31,15 @@ public class Menu {
             System.out.println("For exit write exit");
             data = reader.readLine();
             if (!data.matches("[0-5]") && !data.equals("exit")) {
-                System.out.println("You need to write number.");
+                System.out.println("You need to write a correct number.");
             }
             switch (data) {
                 case "1":
-                    userView.save();
-                    regionView.save();
-                    postView.save();
+                    isTrue = userView.save();
+                    if (isTrue) {
+                        regionView.save();
+                        postView.save();
+                    }
                     break;
                 case "2":
                     userView.getAll();
@@ -46,14 +49,21 @@ public class Menu {
                 case "3":
                     System.out.println("Write id of user which do you want to change: ");
                     try {
-                        id = Long.parseLong(reader.readLine());
+                        data = reader.readLine();
+                        if (!(data.isEmpty() || data.matches("[^\\w]"))) {
+                            id = Long.parseLong(data);
+                            isTrue = userView.update(id);
+                            if (isTrue) {
+                                regionView.update(id);
+                                postView.update(id);
+                            }
+                        } else {
+                            System.out.println("You need to write number.");
+                            break;
+                        }
                     } catch (NumberFormatException e) {
                         System.out.println("You need to write number.");
-                        break;
                     }
-                    userView.update(id);
-                    regionView.update(id);
-                    postView.update(id);
                     break;
                 case "4":
                     System.out.println("Write id of user which do you want to delete: ");

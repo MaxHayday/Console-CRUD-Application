@@ -1,7 +1,5 @@
 package com.max_hayday.console_crud_application.view;
 
-import com.max_hayday.console_crud_application.controller.PostController;
-import com.max_hayday.console_crud_application.controller.RegionController;
 import com.max_hayday.console_crud_application.controller.UserController;
 import com.max_hayday.console_crud_application.model.Post;
 import com.max_hayday.console_crud_application.model.Role;
@@ -28,46 +26,49 @@ public class UserView {
         userController = new UserController();
     }
 
-    void save() {
+    boolean save() {
         postList = new ArrayList<>();
-        System.out.println("Write first name of user: ");
         try {
-            data = reader.readLine();
-            if (!(data.isEmpty() || data.matches("[0-9]") || data.matches("[^\\w]"))) {
-                firstNameData = data;
-            } else {
-                System.out.println("You wrote wrong first name please try again.");
-                return;
-            }
-            System.out.println("Write last name of user: ");
-            data = reader.readLine();
-            if (!(data.isEmpty() || data.equals(" "))) {
-                lastNameData = data;
-            } else System.out.println("You need to write a last name.");
-            System.out.println("Choose role of user: ");
-            System.out.println("1: User");
-            System.out.println("2: Admin");
-            System.out.println("3: Moderator");
-            data = reader.readLine();
-            switch (data) {
-                case "1":
-                    userController.save(id, firstNameData, lastNameData, postList, null, Role.USER);
-                    break;
-                case "2":
-                    userController.save(id, firstNameData, lastNameData, postList, null, Role.ADMIN);
-                    break;
-                case "3":
-                    userController.save(id, firstNameData, lastNameData, postList, null, Role.MODERATOR);
-                    break;
-            }
+            System.out.println("Write first name of user: ");
+            firstNameData = reader.readLine();
+            if (checkForCorrectInputWord(firstNameData)) {
+                System.out.println("Write last name of user: ");
+                lastNameData = reader.readLine();
+                if (checkForCorrectInputWord(lastNameData)) {
+                    System.out.println("Choose role of user: ");
+                    System.out.println("1: User");
+                    System.out.println("2: Admin");
+                    System.out.println("3: Moderator");
+                    data = reader.readLine();
+                    switch (data) {
+                        case "1":
+                            userController.save(id, firstNameData, lastNameData, postList, null, Role.USER);
+                            break;
+                        case "2":
+                            userController.save(id, firstNameData, lastNameData, postList, null, Role.ADMIN);
+                            break;
+                        case "3":
+                            userController.save(id, firstNameData, lastNameData, postList, null, Role.MODERATOR);
+                            break;
+                        default:
+                            System.out.println("You wrote wrong number");
+                            return false;
+                    }
+                } else return false;
+            } else return false;
         } catch (IOException e) {
             System.out.println("Something went wrong. Please try again.");
         }
-
+        return true;
     }
 
     void getUserById(Long id) {
         try {
+            userList = userController.getAll();
+            if (userList.isEmpty()) {
+                System.out.println("You have not users.");
+                return;
+            }
             user = userController.getById(id);
             if (user == null) {
                 System.out.println("YOU HAVE NOT USER WITH ID: " + id);
@@ -101,36 +102,48 @@ public class UserView {
         }
     }
 
-    void update(Long id) {
+    boolean update(Long id) {
         try {
             userList = userController.getAll();
             if (userList.isEmpty()) {
                 System.out.println("You have not users.");
-                return;
+                return false;
+            }
+            if (userList.size() < id || id <= 0) {
+                System.out.println("You have not user with ID: " + id);
+                return false;
             }
             System.out.println("Write first name of user: ");
             firstNameData = reader.readLine();
-            System.out.println("Write last name of user: ");
-            lastNameData = reader.readLine();
-            System.out.println("Choose role of user: ");
-            System.out.println("1: User");
-            System.out.println("2: Admin");
-            System.out.println("3: Moderator");
-            data = reader.readLine();
-            switch (data) {
-                case "1":
-                    userController.update(new User(id, firstNameData, lastNameData, postList, null, Role.USER));
-                    break;
-                case "2":
-                    userController.update(new User(id, firstNameData, lastNameData, postList, null, Role.ADMIN));
-                    break;
-                case "3":
-                    userController.update(new User(id, firstNameData, lastNameData, postList, null, Role.MODERATOR));
-                    break;
-            }
+            if (checkForCorrectInputWord(firstNameData)) {
+                System.out.println("Write last name of user: ");
+                lastNameData = reader.readLine();
+                if (checkForCorrectInputWord(lastNameData)) {
+                    System.out.println("Choose role of user: ");
+                    System.out.println("1: User");
+                    System.out.println("2: Admin");
+                    System.out.println("3: Moderator");
+                    data = reader.readLine();
+                    switch (data) {
+                        case "1":
+                            userController.update(new User(id, firstNameData, lastNameData, postList, null, Role.USER));
+                            break;
+                        case "2":
+                            userController.update(new User(id, firstNameData, lastNameData, postList, null, Role.ADMIN));
+                            break;
+                        case "3":
+                            userController.update(new User(id, firstNameData, lastNameData, postList, null, Role.MODERATOR));
+                            break;
+                        default:
+                            System.out.println("You wrote wrong number");
+                            return false;
+                    }
+                } else return false;
+            } else return false;
         } catch (IOException | ParseException exception) {
             System.out.println("Something went wrong. Please try again.");
         }
+        return true;
     }
 
     void delete(Long id) {
@@ -140,9 +153,22 @@ public class UserView {
                 System.out.println("You have not users.");
                 return;
             }
+            if (userList.size() < id || id <= 0) {
+                System.out.println("You have not user with ID: " + id);
+                return;
+            }
             userController.deleteById(id);
         } catch (IOException | ParseException e) {
             System.out.println("Write correct id.");
+        }
+    }
+
+    private boolean checkForCorrectInputWord(String s) {
+        if (!s.isEmpty() && !s.matches("[0-9]")) {
+            return true;
+        } else {
+            System.out.println("You wrote incorrect word.");
+            return false;
         }
     }
 }
